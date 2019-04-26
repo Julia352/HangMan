@@ -8,14 +8,17 @@ public class WordReader {
     private static final String fileName = "/res/words.txt";
 
     private ArrayList<String> words = new ArrayList<String>();
+    private int i = -1;
 
-    public WordReader() {
-        try (InputStream in = getClass().getResourceAsStream(fileName);
-                BufferedReader bf = new BufferedReader(new InputStreamReader(in))) {
+    public WordReader(String fileName) {
+    	 
+        try (Scanner input = new Scanner(Paths.get(fileName))) {
+               
 
-            String line = "";
-            while ((line = bf.readLine()) != null)
-                words.add(line);
+            
+            while (input.hasNext())
+            	
+                words.add(    input.next()  );
         }
         catch (Exception e) {
             System.out.println("Couldn't find/read file: " + fileName);
@@ -23,8 +26,10 @@ public class WordReader {
         }
     }
 
-    public String getRandomWord() {
-        if (words.isEmpty()) return "NO-DATA";
-        return words.get((int)(Math.random()*words.size()));
+   public String getRandomWord() {
+    	i++;
+    	return words.get(i);
+    	
     }
+        
 }
