@@ -89,7 +89,7 @@ public class HangMan extends Application {
 
     private HangmanImage hangman = new HangmanImage();
 
-    private WordReader wordReader = new WordReader("Words.txt");
+    private WordReader wordReader = new WordReader("Words.txt" , "Questions.txt");
 
     public Parent createContent() {
         HBox rowLetters = new HBox();
@@ -158,9 +158,9 @@ public class HangMan extends Application {
             t.setFill(Color.BLACK);
         }
         
-
+        String [] wordQuestion = wordReader.getRandomWord();
         hangman.reset();
-        word.set(wordReader.getRandomWord().toUpperCase());
+        word.set(wordQuestion[0].toUpperCase());
         lettersToGuess.set(word.length().get());
 
         letters.clear();
