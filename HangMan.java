@@ -1,32 +1,47 @@
+
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.application.Application;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class HangMan extends Application {
-
+	
     private static final int APP_W = 900;
     private static final int APP_H = 500;
     private static final Font DEFAULT_FONT = new Font("Courier", 36);
@@ -88,18 +103,13 @@ public class HangMan extends Application {
         });
 
         Button btnAgain = new Button("NEW GAME");
-        btnAgain.disableProperty().bind(playable);
-        btnAgain.setOnAction(event -> startGame());
+        btnAgain.setOnAction(event -> Play());
+        
+        Button btnAgain2 = new Button("Reveal");
+        btnAgain2.setOnAction(event -> stopGame());
 
         // layout
-        HBox row1 = new HBox();
-        HBox row3 = new HBox();
-        row1.setAlignment(Pos.CENTER);
-        row3.setAlignment(Pos.CENTER);
-        for (int i = 0 ; i < 20; i++) {
-            row1.getChildren().add(new Letter(' '));
-            row3.getChildren().add(new Letter(' '));
-        }
+       
 
         HBox rowAlphabet = new HBox(5);
         rowAlphabet.setAlignment(Pos.CENTER);
@@ -120,15 +130,17 @@ public class HangMan extends Application {
 
         HBox rowHangman = new HBox(10, btnAgain, textScore, hangman);
         rowHangman.setAlignment(Pos.CENTER);
+        HBox rowHangman2 = new HBox(10, btnAgain2, textScore, hangman);
+        rowHangman.setAlignment(Pos.CENTER);
 
         VBox vBox = new VBox(10);
         // vertical layout
         vBox.getChildren().addAll(
-                row1,
+                
                 rowLetters,
-                row3,
                 rowAlphabet,
-                rowHangman);
+                rowHangman,
+                rowHangman2);
         return vBox;
     }
 
@@ -138,12 +150,14 @@ public class HangMan extends Application {
             letter.show();
         }
     }
-
-    private void startGame() {
+    
+   
+    private void Play() {
         for (Text t : alphabet.values()) {
             t.setStrikethrough(false);
             t.setFill(Color.BLACK);
         }
+        
 
         hangman.reset();
         word.set(wordReader.getRandomWord().toUpperCase());
@@ -153,10 +167,11 @@ public class HangMan extends Application {
         for (char c : word.get().toCharArray()) {
             letters.add(new Letter(c));
         }
+     
     }
 
     private static class HangmanImage extends Parent {
-        private static final int SPINE_START_X = 100;
+        private static final int SPINE_START_X = 400;
         private static final int SPINE_START_Y = 20;
         private static final int SPINE_END_X = SPINE_START_X;
         private static final int SPINE_END_Y = SPINE_START_Y + 50;
@@ -203,6 +218,7 @@ public class HangMan extends Application {
             getChildren().addAll(head, spine, leftArm, rightArm, leftLeg, rightLeg);
             lives.set(getChildren().size());
         }
+       
 
         public void reset() {
             getChildren().forEach(node -> node.setVisible(false));
@@ -221,12 +237,12 @@ public class HangMan extends Application {
     }
 
     private static class Letter extends StackPane {
-        private Rectangle bg = new Rectangle(40, 60);
+        private Rectangle bg = new Rectangle(50, 70);
         private Text text;
 
         public Letter(char letter) {
             bg.setFill(letter == ' ' ? Color.DARKSEAGREEN : Color.WHITE);
-            bg.setStroke(Color.BLUE);
+            bg.setStroke(Color.BLACK);
 
             text = new Text(String.valueOf(letter).toUpperCase());
             text.setFont(DEFAULT_FONT);
@@ -248,10 +264,20 @@ public class HangMan extends Application {
             return text.getText().equals(String.valueOf(other).toUpperCase());
         }
     }
+  
+   
+   //move this body and use override to enable
+   
+   
+    //Scene 1
+    
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+ @Override
+    public void start (Stage primaryStage2) {
+            
+    primaryStage2.setTitle("Hangman");
         Scene scene = new Scene(createContent());
+        
         scene.setOnKeyPressed((KeyEvent event) -> {
             if (event.getText().isEmpty())
                 return;
@@ -288,18 +314,26 @@ public class HangMan extends Application {
                 else {
                     scoreModifier += BONUS_MODIFIER;
                 }
+                
             }
+           
+          
+           
         });
-
-        primaryStage.setResizable(false);
-        primaryStage.setWidth(APP_W);
-        primaryStage.setHeight(APP_H);
-        primaryStage.setTitle("Hangman");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        startGame();
+       
+        primaryStage2.setResizable(false);
+        primaryStage2.setWidth(APP_W);
+        primaryStage2.setHeight(APP_H);
+        primaryStage2.setTitle("Hangman");
+        primaryStage2.setScene(scene);
+        primaryStage2.show();
+        Play();
+        
+        
+        
+    
     }
-
+ 
     public static void main(String[] args) {
         launch(args);
     }
