@@ -89,7 +89,7 @@ public class HangMan extends Application {
 
     private HangmanImage hangman = new HangmanImage();
 
-    private WordReader wordReader = new WordReader();
+    private WordReader wordReader = new WordReader("Words.txt");
 
     public Parent createContent() {
         HBox rowLetters = new HBox();
