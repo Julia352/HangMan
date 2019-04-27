@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -23,6 +22,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -41,7 +45,98 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class HangMan extends Application {
+	/*Scene scene1, scene2;
+	public void start(Stage primaryStage) {
+	Label label2= new Label("Select a Title...");
+	FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1.0), label2);
+    fadeTransition.setFromValue(1.0);
+    fadeTransition.setToValue(0.0);
+    fadeTransition.setCycleCount(Animation.INDEFINITE);
+    fadeTransition.play();		
+    Label label1= new Label("Welcome to Hangman");
+    primaryStage.setTitle("HangMan");
+    Button sports = new Button("sports");
+   
 	
+    sports.setOnAction(new EventHandler<ActionEvent>() {
+  
+        @Override
+        public void handle(ActionEvent event) {
+            System.out.println("Hello World!");
+        }
+    });
+    Button movies= new Button("Movies");
+    movies.setOnAction(new EventHandler<ActionEvent>() {
+  	  
+        @Override
+        public void handle(ActionEvent event) {
+            System.out.println("Hello World!");
+        }
+    });
+    Button celebrity= new Button("Celebrity");
+    celebrity.setOnAction(new EventHandler<ActionEvent>() {
+  	  
+        @Override
+        public void handle(ActionEvent event) {
+            System.out.println("Hello World!");
+        }
+    });
+    Button carBrands= new Button("Car Brands");
+    carBrands.setOnAction(new EventHandler<ActionEvent>() {
+  	  
+        @Override
+        public void handle(ActionEvent event) {
+            System.out.println("Hello World!");
+        }
+    });
+    Button miscellaneous= new Button("Miscellaneous");
+    miscellaneous.setOnAction(new EventHandler<ActionEvent>() {
+  	  
+        @Override
+        public void handle(ActionEvent event) {
+            System.out.println("Hello World!");
+        }
+    });
+
+
+    Pane root = new Pane();
+    
+    label1.setStyle("-fx-font: 60 Courier;");
+    label1.setLayoutX(140);
+    label1.setLayoutY(50);
+    root.getChildren().add(label1);
+    
+    label2.setStyle("-fx-font: 30 Arial;");
+    label2.setLayoutX(350);
+    label2.setLayoutY(200);
+    root.getChildren().add(label2);
+    
+    sports.setLayoutX(100);
+    sports.setLayoutY(400);
+    root.getChildren().add(sports);
+    
+    movies.setLayoutX(250);
+    movies.setLayoutY(400);
+    root.getChildren().add(movies);
+    
+    celebrity.setLayoutX(395);
+    celebrity.setLayoutY(400);
+    root.getChildren().add(celebrity);
+    
+    carBrands.setLayoutX(550);
+    carBrands.setLayoutY(400);
+    root.getChildren().add(carBrands);
+    
+    miscellaneous.setLayoutX(700);
+    miscellaneous.setLayoutY(400);
+    root.getChildren().add(miscellaneous);
+    
+    primaryStage.setScene(new Scene(root, 900, 500));
+    primaryStage.show();
+    primaryStage.setResizable(false);
+    
+
+}*/	
     private static final int APP_W = 900;
     private static final int APP_H = 500;
     private static final Font DEFAULT_FONT = new Font("Courier", 36);
@@ -92,16 +187,24 @@ public class HangMan extends Application {
     private WordReader wordReader = new WordReader("Words.txt" , "Questions.txt");
 
     public Parent createContent() {
+    	HBox rowQuestions =new HBox(5);
+    	rowQuestions.setAlignment(Pos.CENTER);
+    	String [] wordQuestion = wordReader.getRandomWord();
+        Text q = new Text(String.valueOf(wordQuestion));
+        q.setFont(DEFAULT_FONT);
+        rowQuestions.getChildren().add(q);
+        
         HBox rowLetters = new HBox();
-        rowLetters.setAlignment(Pos.CENTER);
+        rowLetters.setAlignment(Pos.BASELINE_CENTER);
         letters = rowLetters.getChildren();
+        rowLetters.setSpacing(10);
 
         playable.bind(hangman.lives.greaterThan(0).and(lettersToGuess.greaterThan(0)));
         playable.addListener((obs, old, newValue) -> {
             if (!newValue.booleanValue())
                 stopGame();
         });
-
+        
         Button btnAgain = new Button("NEW GAME");
         btnAgain.setOnAction(event -> Play());
         
@@ -135,8 +238,10 @@ public class HangMan extends Application {
 
         VBox vBox = new VBox(10);
         // vertical layout
+        vBox.setAlignment(Pos.BOTTOM_CENTER);
         vBox.getChildren().addAll(
                 
+        		rowQuestions,
                 rowLetters,
                 rowAlphabet,
                 rowHangman,
@@ -271,9 +376,8 @@ public class HangMan extends Application {
    
     //Scene 1
     
-
- @Override
-    public void start (Stage primaryStage2) {
+    
+    public void start(Stage primaryStage2) {
             
     primaryStage2.setTitle("Hangman");
         Scene scene = new Scene(createContent());
@@ -338,4 +442,3 @@ public class HangMan extends Application {
         launch(args);
     }
 }
-
