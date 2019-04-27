@@ -190,7 +190,7 @@ public class HangMan extends Application {
     	HBox rowQuestions =new HBox(5);
     	rowQuestions.setAlignment(Pos.CENTER);
     	String [] wordQuestion = wordReader.getRandomWord();
-        Text q = new Text(String.valueOf(wordQuestion[1));
+        Text q = new Text(String.valueOf(wordQuestion[1]));
         q.setFont(DEFAULT_FONT);
         rowQuestions.getChildren().add(q);
         
