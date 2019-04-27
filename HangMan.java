@@ -1,6 +1,9 @@
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
+
+
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -32,6 +35,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -97,8 +102,6 @@ public class HangMan extends Application {
             System.out.println("Hello World!");
         }
     });
-
-
     Pane root = new Pane();
     
     label1.setStyle("-fx-font: 60 Courier;");
@@ -135,7 +138,6 @@ public class HangMan extends Application {
     primaryStage.show();
     primaryStage.setResizable(false);
     
-
 }*/	
     private static final int APP_W = 900;
     private static final int APP_H = 500;
@@ -144,16 +146,24 @@ public class HangMan extends Application {
     private static final int POINTS_PER_LETTER = 100;
     private static final float BONUS_MODIFIER = 0.2f;
 
+    private static MediaPlayer a ;
+    
+    private static MediaPlayer donkeyPlayer;
+    
+    private static MediaPlayer victoryPlayer;
+    private static MediaPlayer lossPlayer;
+    
     /**
      * The word to guess
      */
     private SimpleStringProperty word = new SimpleStringProperty();
+    private SimpleStringProperty question = new SimpleStringProperty();
 
     /**
      * How many letters left to guess
      */
     private SimpleIntegerProperty lettersToGuess = new SimpleIntegerProperty();
-
+    private String[] wordQuestion = {null,null};
     /**
      * Current score
      */
@@ -185,12 +195,25 @@ public class HangMan extends Application {
     private HangmanImage hangman = new HangmanImage();
 
     private WordReader wordReader = new WordReader("Words.txt" , "Questions.txt");
+    
+    private Text q;
+	private HBox rowQuestions;
+    
 
     public Parent createContent() {
-    	HBox rowQuestions =new HBox(5);
+    	URL resource = getClass().getResource("background music.wav");
+    	 a =new MediaPlayer(new Media(resource.toString()));
+   	 a.setOnEndOfMedia(new Runnable() {
+   	       public void run() {
+   	         a.seek(Duration.ZERO);
+   	       }
+   	   });
+   	  a.play();
+    	 
+    	rowQuestions =new HBox(5);
     	rowQuestions.setAlignment(Pos.CENTER);
-    	String [] wordQuestion = wordReader.getRandomWord();
-        Text q = new Text(String.valueOf(wordQuestion[1]));
+    	
+        q = new Text(String.valueOf(""));
         q.setFont(DEFAULT_FONT);
         rowQuestions.getChildren().add(q);
         
@@ -206,7 +229,11 @@ public class HangMan extends Application {
         });
         
         Button btnAgain = new Button("NEW GAME");
-        btnAgain.setOnAction(event -> Play());
+        btnAgain.setOnAction(event -> {
+        	rowQuestions.getChildren().removeAll(rowQuestions.getChildren());
+        	donkeyPlayer.stop();
+        	Play();
+        	});
         
         Button btnAgain2 = new Button("Reveal");
         btnAgain2.setOnAction(event -> stopGame());
@@ -234,7 +261,7 @@ public class HangMan extends Application {
         HBox rowHangman = new HBox(10, btnAgain, textScore, hangman);
         rowHangman.setAlignment(Pos.CENTER);
         HBox rowHangman2 = new HBox(10, btnAgain2, textScore, hangman);
-        rowHangman.setAlignment(Pos.CENTER);
+        rowHangman2.setAlignment(Pos.CENTER);
 
         VBox vBox = new VBox(10);
         // vertical layout
@@ -258,12 +285,16 @@ public class HangMan extends Application {
     
    
     private void Play() {
+    	
         for (Text t : alphabet.values()) {
             t.setStrikethrough(false);
             t.setFill(Color.BLACK);
         }
         
-        String [] wordQuestion = wordReader.getRandomWord();
+         wordQuestion = wordReader.getRandomWord();// another method 
+         q = new Text(String.valueOf(wordQuestion[1]));
+         q.setFont(DEFAULT_FONT);
+         rowQuestions.getChildren().add(q);
         hangman.reset();
         word.set(wordQuestion[0].toUpperCase());
         lettersToGuess.set(word.length().get());
@@ -287,6 +318,7 @@ public class HangMan extends Application {
         private SimpleIntegerProperty lives = new SimpleIntegerProperty();
 
         public HangmanImage() {
+        	
             Circle head = new Circle(20);
             head.setTranslateX(SPINE_START_X);
 
@@ -331,10 +363,18 @@ public class HangMan extends Application {
         }
 
         public void takeAwayLife() {
+        	
             for (Node n : getChildren()) {
                 if (!n.isVisible()) {
                     n.setVisible(true);
                     lives.set(lives.get() - 1);
+if(lives.get() == 0) {
+	URL donkeySound = getClass().getResource("donkey.wav");
+   donkeyPlayer = new MediaPlayer(new Media(donkeySound.toString()));
+   a.pause();
+	donkeyPlayer.play();
+	donkeyPlayer.setOnStopped(() -> a.play());
+}
                     break;
                 }
             }
@@ -412,11 +452,22 @@ public class HangMan extends Application {
                 }
 
                 if (!found) {
+                	
                     hangman.takeAwayLife();
-                    scoreModifier = 1.0f;
+                    scoreModifier -= BONUS_MODIFIER;
+                    URL lossSound = getClass().getResource("lose sound.wav");
+                    lossPlayer = new MediaPlayer(new Media(lossSound.toString()));
+                    a.pause();
+                 	lossPlayer.play();
+                 	lossPlayer.setOnEndOfMedia(() -> a.play());
                 }
                 else {
                     scoreModifier += BONUS_MODIFIER;
+                    URL victorySound = getClass().getResource("victory sound.wav");
+                    victoryPlayer = new MediaPlayer(new Media(victorySound.toString()));
+                    a.pause();
+                 	victoryPlayer.play();
+                 	victoryPlayer.setOnEndOfMedia(() -> a.play());
                 }
                 
             }
