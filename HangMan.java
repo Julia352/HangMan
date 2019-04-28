@@ -198,6 +198,7 @@ public class HangMan extends Application {
     
     private Text q;
 	private HBox rowQuestions;
+	private static boolean dSound = false;
     
 
     public Parent createContent() {
@@ -230,8 +231,14 @@ public class HangMan extends Application {
         
         Button btnAgain = new Button("NEW GAME");
         btnAgain.setOnAction(event -> {
+        	
+        	if(dSound == true) {
+        			donkeyPlayer.stop(); //problem
+        			dSound = false;
+        	
+        	}
+        	
         	rowQuestions.getChildren().removeAll(rowQuestions.getChildren());
-        	donkeyPlayer.stop();
         	Play();
         	});
         
@@ -291,7 +298,7 @@ public class HangMan extends Application {
             t.setFill(Color.BLACK);
         }
         
-         wordQuestion = wordReader.getRandomWord();// another method 
+         wordQuestion = wordReader.getRandomWord();
          q = new Text(String.valueOf(wordQuestion[1]));
          q.setFont(DEFAULT_FONT);
          rowQuestions.getChildren().add(q);
@@ -372,7 +379,9 @@ if(lives.get() == 0) {
 	URL donkeySound = getClass().getResource("donkey.wav");
    donkeyPlayer = new MediaPlayer(new Media(donkeySound.toString()));
    a.pause();
+   dSound=true;
 	donkeyPlayer.play();
+	
 	donkeyPlayer.setOnStopped(() -> a.play());
 }
                     break;
