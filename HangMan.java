@@ -163,6 +163,7 @@ public class HangMan extends Application {
         	});
         
         Button btnAgain2 = new Button("Reveal");
+        btnAgain2.setTooltip(new Tooltip("Display Answer"));
         btnAgain2.setOnAction(event -> stopGame());
         
         Button btnAgain3 = new Button("Instructions");
