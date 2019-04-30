@@ -1,11 +1,13 @@
 
     
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-
+import com.sun.glass.ui.Window.Level;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -17,6 +19,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -24,6 +27,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -32,7 +36,6 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -51,7 +54,11 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+
+
 public class HangMan extends Application {	
+	
+	
     private static final int APP_W = 900;
     private static final int APP_H = 500;
     private static final Font DEFAULT_FONT = new Font("Courier", 36);
@@ -124,7 +131,7 @@ public class HangMan extends Application {
    	   });
    	  a.play();
     	 
-    	rowQuestions =new HBox(5);
+   	  	rowQuestions =new HBox(5);
     	rowQuestions.setAlignment(Pos.CENTER);
     	
         q = new Text(String.valueOf(""));
@@ -157,6 +164,13 @@ public class HangMan extends Application {
         
         Button btnAgain2 = new Button("Reveal");
         btnAgain2.setOnAction(event -> stopGame());
+        
+        Button btnAgain3 = new Button("Instructions");
+        btnAgain3.setTooltip(new Tooltip("How to play"));
+        btnAgain3.setOnAction(event -> instructions());
+        	
+        
+    
 
         // layout
        
@@ -180,7 +194,7 @@ public class HangMan extends Application {
 
         HBox rowHangman = new HBox(10, btnAgain, textScore, hangman);
         rowHangman.setAlignment(Pos.CENTER);
-        HBox rowHangman2 = new HBox(10, btnAgain2, textScore, hangman);
+        HBox rowHangman2 = new HBox(10, btnAgain2,btnAgain3, textScore, hangman);
         rowHangman2.setAlignment(Pos.CENTER);
 
         VBox vBox = new VBox(10);
@@ -202,8 +216,40 @@ public class HangMan extends Application {
             letter.show();
         }
     }
-    
-   
+    public void instructions(){
+    	
+        Label secondLabel = new Label("1. Click New Game to genate new questions.");
+        Label secondLabe2 = new Label("2. Select a letter of the alphabet using keypad.");
+        Label secondLabe3 = new Label("3. If the letter is contained it will be revealed.");
+        Label secondLabe4 = new Label("4. If the letter is not contained in the word/phrase,a portion of the hangman is added.");
+        Label secondLabe5 = new Label("5. The game continues until:");
+        Label secondLabe6 = new Label("The word/phrase is guessed (all letters are revealed) – WINNER or,");
+        Label secondLabe7 = new Label("All the parts of the hangman are displayed – LOSER");
+        VBox vBox = new VBox(10);
+        
+        vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(
+                
+        		secondLabel,
+        		secondLabe2,
+        		secondLabe3,
+        		secondLabe4,
+        		secondLabe5,
+        		secondLabe6,
+        		secondLabe7);
+        
+        
+        Scene secondScene = new Scene(vBox, 600, 300);
+
+        Stage secondStage = new Stage();
+        secondStage.setTitle("Instructions");
+        secondStage.setScene(secondScene);
+        
+        //Set position of second window, related to primary window.
+        
+        secondStage.setResizable(false);
+        secondStage.show();
+    }
     private void Play() {
     	
         for (Text t : alphabet.values()) {
@@ -317,6 +363,8 @@ if(lives.get() == 0) {
 
             setAlignment(Pos.CENTER);
             getChildren().addAll(bg, text);
+            
+            
         }
 
         public void show() {
@@ -342,6 +390,12 @@ if(lives.get() == 0) {
     public void start(Stage primaryStage2) {
             
     primaryStage2.setTitle("Hangman");
+    	Image image = new Image("file:HangMan.jpg");
+    	ImageView mv = new ImageView(image);
+    	
+    	Group root = new Group();
+    	root.getChildren().addAll(mv);
+    	
         Scene scene = new Scene(createContent());
         
         scene.setOnKeyPressed((KeyEvent event) -> {
@@ -415,4 +469,3 @@ if(lives.get() == 0) {
         launch(args);
     }
 }
-
